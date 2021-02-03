@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+option go_package = "msp-smp/api/translation/v1";
+
+package translation.v1;
+import "google/protobuf/empty.proto";
+
+// TranslationService API definition.
+service TranslationService {
+  rpc GetTranslation(GetTranslationRequest) returns (GetTranslationResponse);
+  rpc AddTranslation(AddTranslationRequest) returns (AddTranslationResponse);
+  rpc DeleteTranslation(DeleteTranslationRequest) returns (google.protobuf.Empty);
+  rpc UpdateTranslation(UpdateTranslationRequest) returns (UpdateTranslationResponse);
+}
+
+// The GetTranslationRequest for GetTranslation endPoint.
+message GetTranslationRequest  {
+  // language for retrieving the right translation.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // key pattern to retrieve the translation.
+  string keyPattern = 3;
+}
+
+// The GetTranslationResponse for GetTranslation endPoint.
+message GetTranslationResponse  {
+  // language for retrieving the right translation.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // messages the given key pattern
+  repeated KeyMessage  messages = 3;
+
+}
+
+message KeyMessage{
+   // key for the translation.
+   string key = 1;
+   // message translated
+   string message = 2;
+}
+
+
+
+// The AddTranslationRequest for AddTranslation endPoint.
+message AddTranslationRequest  {
+  // language for retrieving the right translation.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // key for the new the translation.
+  string key = 3;
+  // message translated
+  string message = 4;
+}
+
+// The AddTranslationResponse for AddTranslation endPoint.
+message AddTranslationResponse  {
+  // language assigned to the translation.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // key assigned to the translation.
+  string key = 3;
+  // message translated
+  string message = 4;
+}
+
+// The DeleteTranslationRequest for DeleteTranslation endPoint.
+message DeleteTranslationRequest  {
+  // language to find the translation to be deleted.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // key to find the translation to be deleted.
+  string key = 3;
+}
+
+// The UpdateTranslationRequest for UpdateTranslation endPoint.
+message UpdateTranslationRequest  {
+  // language to find the translation to be updated.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // key to find the translation to be update.
+  string key = 3;
+  // message to be used to update it.
+  string message = 4;
+}
+
+// The UpdateTranslationResponse for UpdateTranslation endPoint.
+message UpdateTranslationResponse  {
+  // language to find the translation.
+  string language = 1;
+  // scope for the translation.
+  string scope = 2;
+  // key to find the translation.
+  string key = 3;
+  // message translated
+  string message = 4;
+}
