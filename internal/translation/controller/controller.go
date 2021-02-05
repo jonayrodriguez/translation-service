@@ -44,12 +44,13 @@ func (c *TranslationController) AddTranslation(ctx context.Context, in *pb.AddTr
 
 // UpdateTranslation to update an existing translated message.
 func (c *TranslationController) UpdateTranslation(ctx context.Context, in *pb.UpdateTranslationRequest) (*pb.UpdateTranslationResponse, error) {
-	log.Logger.Debug("Updating an exising translation", zap.Any("Key", &in.Key), zap.Stringp("Language", &in.Language), zap.Stringp("Scope", &in.Scope), zap.Stringp("Message", &in.Message))
+	log.Logger.Debug("Updating an existing translation", zap.Any("Key", &in.Key), zap.Stringp("Language", &in.Language),
+		zap.Stringp("Scope", &in.Scope), zap.Stringp("Message", &in.Message))
 	return c.service.UpdateTranslation(ctx, in)
 }
 
 // DeleteTranslation to delete an existing translated message.
 func (c *TranslationController) DeleteTranslation(ctx context.Context, in *pb.DeleteTranslationRequest) (*empty.Empty, error) {
-	log.Logger.Debug("Deleting an exising translation", zap.Any("Key", &in.Key), zap.Stringp("Language", &in.Language), zap.Stringp("Scope", &in.Scope))
+	log.Logger.Debug("Deleting an existing translation", zap.Any("Key", &in.Key), zap.Stringp("Language", &in.Language), zap.Stringp("Scope", &in.Scope))
 	return c.service.DeleteTranslation(ctx, in)
 }

@@ -12,6 +12,8 @@ import (
 
 	"github.com/jonayrodriguez/translation-service/internal/translation/config"
 	"github.com/jonayrodriguez/translation-service/internal/translation/controller"
+	"github.com/jonayrodriguez/translation-service/internal/translation/database"
+	"github.com/jonayrodriguez/translation-service/internal/translation/repository"
 	"github.com/jonayrodriguez/translation-service/internal/translation/service"
 
 	"github.com/jonayrodriguez/translation-service/internal/log"
@@ -27,10 +29,11 @@ const (
 	DefaultPort        = 50051
 	DefaultServiceName = "Translation Service"
 	DefaultDBHost      = "127.0.0.1"
-	DefaultDBPort      = 50059
+	DefaultDBPort      = 3306
 	DefaultDBSchema    = "translation"
-	DefaultDBUserName  = "test"
-	DefaultDBPassword  = ""
+	DefaultDBUserName  = "root"
+	DefaultDBPassword  = "pass4root"
+	DefaultDBParams    = "charset=utf8mb4&parseTime=True&loc=Local"
 )
 
 var (
@@ -55,7 +58,12 @@ func main() {
 func runServer() {
 	logger, _ := log.Config(conf.Logging)
 	logger.Info(fmt.Sprintf("Starting %s. Version: %s", conf.Service.Name, version))
-
+	// keep in mind when it should be used pointer vs copy
+	err := database.InitDB(&conf.DB)
+	// if there is any error connecting/migrating to DB the configuration.
+	if err != nil {
+		logger.Fatal(fmt.Sprintf("Failed to connect to the DB: %v", err))
+	}
 	address := fmt.Sprintf("0.0.0.0:%d", conf.Server.Port)
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
@@ -80,9 +88,11 @@ func runServer() {
 
 // registerController will register the controller in the server
 func registerController(server grpc.ServiceRegistrar) error {
-	// TODO - Replace nil with the repository
-	svc, err := service.NewTranslateService(nil)
-
+	repo, err := repository.NewTranslateRepository(database.GetInstance())
+	if err != nil {
+		return err
+	}
+	svc, err := service.NewTranslateService(repo)
 	if err != nil {
 		return err
 	}
@@ -116,12 +126,13 @@ func init() {
 	rootCmd.Flags().StringVarP(&conf.Service.Name, "service", "s", DefaultServiceName, "service name")
 	rootCmd.Flags().IntVarP(&conf.Server.Port, "port", "p", DefaultPort, "gRPC server port")
 
-	// Get email server config from flag, or use default
+	// Get Database config from flag, or use default
 	rootCmd.Flags().StringVar(&conf.DB.Host, "db_host", DefaultDBHost, "database host")
 	rootCmd.Flags().IntVar(&conf.DB.Port, "db_port", DefaultDBPort, "databaser port")
 	rootCmd.Flags().StringVar(&conf.DB.Schema, "db_schema", DefaultDBSchema, "database schema")
 	rootCmd.Flags().StringVar(&conf.DB.Username, "db_username", DefaultDBUserName, "username for database")
 	rootCmd.Flags().StringVar(&conf.DB.Password, "db_password", DefaultDBPassword, "database password")
+	rootCmd.Flags().StringVar(&conf.DB.Params, "db_params", DefaultDBParams, "database params")
 
 	// Get logging configuration
 	rootCmd.Flags().StringVarP(&conf.Logging.Level, "loglevel", "l", "info", "log level")

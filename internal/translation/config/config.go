@@ -29,4 +29,5 @@ type DBConfig struct {
 	Schema   string
 	Username string
 	Password string
+	Params   string
 }

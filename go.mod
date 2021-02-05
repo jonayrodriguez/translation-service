@@ -10,7 +10,6 @@ require (
 	go.uber.org/zap v1.16.0
 	google.golang.org/grpc v1.35.0
 	google.golang.org/protobuf v1.25.0
+	gorm.io/driver/mysql v1.0.4
+	gorm.io/gorm v1.20.12
 )
-
-replace github.com/jonayrodriguez/translation-service => ./
-
